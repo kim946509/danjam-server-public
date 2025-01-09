@@ -1,0 +1,95 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.4'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.mariadb.jdbc:mariadb-java-client'
+
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	//swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+	//Spring security 관련. jwt version : 0.12.3. 0.11.3도 많이 사용함. 버전마다 구현이 많이 다름
+	implementation 'org.springframework.boot:spring-boot-starter-security'//Spring security
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+	// minio
+	implementation("io.minio:minio:8.5.9")
+
+	// stomp
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// rabbitMq
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+	// webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// modelMapper
+	implementation 'org.modelmapper:modelmapper:3.1.0'
+
+	compileOnly 'org.projectlombok:lombok'
+//	developmentOnly 'org.springframework.boot:spring-boot-devtools' //변경 사항을 자동으로 반영해주는 툴
+//	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	//firebase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+	//Jackson Data Bind
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.16.1'     // Jackson Data Bind
+
+	//thymleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	//Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//test를 위한 mariadb
+	testImplementation 'org.mariadb.jdbc:mariadb-java-client'
+
+	// redis사용시 localDateTime 직렬화 문제를 해결하기 위한 라이브러리
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	// LAZY 로딩된 프록시 객체를 JSON으로 변환하기 위한 라이브러리. Redis에 저장할 때 사용.
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5-jakarta'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+springBoot {
+    mainClass = 'com.example.danjamserver.DanjamServerApplication' // 실제 메인 클래스 경로로 변경
+}
+
+

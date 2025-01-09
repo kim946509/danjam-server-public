@@ -1,0 +1,11 @@
+.gradle
+.idea
+build
+docker-compose.yml
+src/main/resources/application.yml
+src/main/resources/firebase/**
+src/main/resources/fi
+src/main/java/com/example/danjamserver/MongoConfig.java
+src/test/resources/application-test.yml
+
+out/**

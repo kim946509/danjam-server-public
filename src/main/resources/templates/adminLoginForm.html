@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인</title>
+</head>
+<body>
+<h1>로그인</h1>
+<form id="login-form" onsubmit="login(event)">
+  <div>
+    <label for="username">이름:</label>
+    <input type="text" id="username" name="username" required />
+  </div>
+  <div>
+    <label for="password">비밀번호:</label>
+    <input type="password" id="password" name="password" required />
+  </div>
+  <div>
+    <button type="submit">로그인</button>
+  </div>
+</form>
+
+<div id="content"></div> <!-- 새 콘텐츠를 삽입할 요소 -->
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  async function login(event) {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const formData = {
+      username: username,
+      password: document.getElementById('password').value
+    };
+
+    try {
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error('로그인 실패');
+      }
+
+      // 로그인 성공 시 서버에서 반환한 헤더에서 Access 값을 읽어옴
+      const accessToken = response.headers.get('Access');
+      console.log(accessToken);
+
+      // 로컬 스토리지에 저장
+      localStorage.setItem('access', accessToken);
+
+      // 리다이렉션 없이 서버에서 반환된 HTML을 특정 요소에 삽입
+      const html = await fetch('/api/admin/users/form', {
+        headers: {
+          'Access': accessToken
+        }
+      }).then(res => res.text());
+
+      document.getElementById('content').innerHTML = html;
+      initializeForm(); // 새로 로드된 콘텐츠에 이벤트 리스너 추가 및 username 설정
+
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('로그인 과정에서 오류가 발생했습니다.');
+    }
+  }
+
+  function initializeForm() {
+    document.getElementById('submit-button').addEventListener('click', async function(event) {
+      event.preventDefault(); // 폼 제출 기본 동작 막기
+
+      const accessToken = localStorage.getItem("access");
+      const formData = {
+        username: document.getElementById('name').value,
+        isApproved: document.getElementById('isApproved').checked,
+        description: document.getElementById('description').value
+      };
+      console.log(JSON.stringify(formData));
+
+      try {
+        const response = await fetch('/api/admin/users/strangers/authenticate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access': accessToken
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          alert('제출 성공');
+        } else {
+          alert('제출 실패');
+        }
+      } catch (error) {
+        console.error('Error during form submission:', error);
+        alert('제출 과정에서 오류가 발생했습니다.');
+      }
+    });
+  }
+  /*]]>*/
+</script>
+</body>
+</html>
